@@ -1,13 +1,21 @@
 #!/system/bin/sh
 if command -v resetprop > /dev/null 2>&1; then
-    resetprop="resetprop"
-elif [ -f /data/adb/ksu/bin/resetprop ]; then
-    resetprop="/data/adb/ksu/bin/resetprop"
-elif [ -f /data/adb/ap/bin/resetprop ]; then
-    resetprop="/data/adb/ap/bin/resetprop"
+    resetprop=$(command -v resetprop)
 else
-    echo "错误：未找到resetprop命令"
-    exit 1
+    if [ -f /data/adb/ksu/bin/resetprop ]; then
+        resetprop="/data/adb/ksu/bin/resetprop"
+    elif [ -f /data/adb/ap/bin/resetprop ]; then
+        resetprop="/data/adb/ap/bin/resetprop"
+    else
+        resetprop="setprop"
+    fi
+fi
+DEFAULT_OPTION="1"
+if [ -z "$1" ]; then
+    echo "默认100% GPU/0% CPU渲染"
+    agpu_option=$DEFAULT_OPTION
+else
+    agpu_option=$1
 fi
 echo ""
 echo "请选择渲染设置:"
@@ -201,5 +209,5 @@ case "$agpu_option" in
     exit 1
     ;;
 esac
-sleep 2
+
 
